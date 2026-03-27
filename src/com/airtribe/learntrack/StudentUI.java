@@ -131,8 +131,7 @@ public class StudentUI {
                 else if(ans.equalsIgnoreCase("N")) return;
                 else System.out.println("Wrong input inserted..try again");
             }
-
-            s.setActiveStatus(!s.getActiveStatus());
+            StudentService.setActive(s);
             System.out.println("Status changed successfully.");
         }catch (Exception e){
             System.out.println(e.getMessage());

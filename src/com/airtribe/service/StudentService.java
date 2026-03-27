@@ -1,6 +1,7 @@
 package service;
 
 import entity.Student;
+import repository.EnrollmentRepository;
 import repository.StudentRepository;
 import util.IdGenerator;
 
@@ -22,6 +23,9 @@ public class StudentService {
         }else{
             s= new Student(id,firstName,lastName,email,batch,true);
         }
+        //Adding element to Student List As well as in enrollment active list..
+        EnrollmentRepository enrollStudent = new EnrollmentRepository();
+        enrollStudent.addToActiveList(s);
         return studentRepository.addStudentToList(s);
     }
 
@@ -33,10 +37,7 @@ public class StudentService {
         studentRepository.viewAll();
     }
 
-    public void setActive(int id,boolean status){
-        Student s = findStudentById(id);
-        if(s!=null){
-            studentRepository.setActive(s,status);
-        }
+    public static void setActive(Student s){
+        s.setActiveStatus(!s.getActiveStatus());
     }
 }

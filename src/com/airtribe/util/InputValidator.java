@@ -1,5 +1,9 @@
 package util;
 
+import entity.Student;
+import service.EnrollmentService;
+import service.StudentService;
+
 public class InputValidator {
 
     public static boolean isValidMainOption(int option) {
@@ -17,5 +21,15 @@ public class InputValidator {
     public static boolean isValidName(String name) {
         // Only letters (uppercase/lowercase), no digits, no special characters
         return name != null && name.matches("[a-zA-Z]+");
+    }
+
+    public static boolean isValidOption(int option) {
+        return option >=1 && option <=3;
+    }
+
+    public static boolean isValidStudentId(int option) {
+        EnrollmentService enroll = new EnrollmentService();
+        Student student = enroll.findStudentByIdInActiveList(option);
+        return student!=null;
     }
 }

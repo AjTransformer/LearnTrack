@@ -48,8 +48,8 @@ public class Main {
 
         Map<Integer, Runnable> mainMenu = new HashMap<>();
         mainMenu.put(1, StudentUI::studentMenu);
-       // mainMenu.put(2, Main::courseMenu);
-        //mainMenu.put(3, Main::enrollmentMenu);
+        mainMenu.put(2, CourseUi::courseMenu);
+        mainMenu.put(3, EnrollmentUI::enrollmentMenu);
 
         System.out.println("Select one option to perform.");
         System.out.println("1 : Student Management");
@@ -73,5 +73,6 @@ public class Main {
             }
         }
         mainMenu.get(option).run();
+        scn.close();
     }
 }

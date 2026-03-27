@@ -45,6 +45,13 @@ public class StudentRepository {
         students.forEach(Student::displayInfo);
     }
 
+    public void viewStudentByNameAndId(){
+        if (students.isEmpty()) {
+            throw new EmptyListException("No students available to display");
+        }
+        students.forEach(Student::displayNameAndID);
+    }
+
     public void setActive(Student s,boolean status){
         if (students.isEmpty()) {
             throw new EmptyListException("No students available to change status, please add student before changing status.");

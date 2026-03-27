@@ -7,13 +7,7 @@ public class Course {
     private int durationInWeeks;
     private boolean active;
 
-    public Course(String courseName, int id, String description, int durationInWeeks, boolean active) {
-        this.courseName = courseName;
-        this.id = id;
-        this.description = description;
-        this.durationInWeeks = durationInWeeks;
-        this.active = active;
-    }
+
 
     public void setId(int id) {
         this.id = id;
@@ -53,5 +47,15 @@ public class Course {
 
     public boolean isActive() {
         return active;
+    }
+
+    public void displayInfo() {
+        System.out.println("----- Course Details -----");
+        System.out.println("Course ID        : " + id);
+        System.out.println("Course Name      : " + courseName);
+        System.out.println("Description      : " + description);
+        System.out.println("Duration         : " + durationInWeeks + " week(s)");
+        System.out.println("Status           : " + (active ? "Active" : "Inactive"));
+        System.out.println("--------------------------");
     }
 }

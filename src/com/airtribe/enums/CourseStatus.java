@@ -1,6 +1,6 @@
 package enums;
 
 public enum CourseStatus {
-    STARTED,
+    ACTIVATE,
     DEACTIVATE
 }

@@ -39,13 +39,23 @@ public class Student extends Person{
     }
 
     @Override
-    public void displayInfo(){
-        System.out.println("Student details");
-        System.out.println("Student First Name: "+getFirstName());
-        System.out.println("Student Last Name: "+getLastName());
-        System.out.println("Student Email ID: "+getEmail());
-        System.out.println("Student Batch Name: " + getBatchName());
-        System.out.println("Active: "+getActiveStatus());
+    public void displayInfo() {
+        System.out.println("\n===== Student Information =====");
+        System.out.printf("ID           : %s%n", getId());
+        System.out.printf("First Name   : %s%n", getFirstName());
+        System.out.printf("Last Name    : %s%n", getLastName());
+        System.out.printf("Email ID     : %s%n", getEmail());
+        System.out.printf("Batch Name   : %s%n", getBatchName());
+        System.out.printf("Status       : %s%n", getActiveStatus() ? "Active" : "Inactive");
+        System.out.println("===============================\n");
+    }
+
+    public void displayNameAndID(){
+        System.out.println("\n===== Student Information =====");
+        System.out.printf("ID           : %s%n", getId());
+        System.out.printf("First Name   : %s%n", getFirstName());
+        System.out.printf("Last Name    : %s%n", getLastName());
+        System.out.println("===============================\n");
     }
 
 }
