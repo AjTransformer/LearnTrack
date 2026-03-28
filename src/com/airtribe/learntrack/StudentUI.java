@@ -13,31 +13,28 @@ public class StudentUI {
     static Scanner scn = new Scanner(System.in);
 
     public static void studentMenu() {
-        Map<Integer, Runnable> map = new HashMap<Integer, Runnable>();
-
+        Map<Integer, Runnable> map = new HashMap<>();
         map.put(1, StudentUI::addStudent);
         map.put(2, StudentUI::viewStudent);
         map.put(3, StudentUI::searchStudent);
         map.put(4, StudentUI::setActive);
 
-        int option;
-        System.out.println("Select one option to perform.");
-        System.out.println("1 : Add new student");
-        System.out.println("2 : View all students");
-        System.out.println("3 : Search student by ID");
-        System.out.println("4 : Active/Deactivate a student Id");
-        System.out.println("5 : Go back to main menu");
-
         while (true) {
+            // menu inside loop — reprints after every action
+            System.out.println("\nSelect one option to perform.");
+            System.out.println("1 : Add new student");
+            System.out.println("2 : View all students");
+            System.out.println("3 : Search student by ID");
+            System.out.println("4 : Activate/Deactivate a student");
+            System.out.println("0 : Go back to main menu");
+
             try {
-                option = Integer.parseInt(scn.nextLine());
-                if (option == 5) {
-                    return;
-                } else if (!InputValidator.isValidStudentOption(option)) {
+                int option = Integer.parseInt(scn.nextLine());
+                if (option == 0) return;
+                if (!InputValidator.isValidStudentOption(option)) {
                     throw new InvalidInputException("Invalid option selected. Please try again.");
                 }
-                map.get(option).run();
-                break; //for valid input
+                map.get(option).run(); // no break — returns to menu after action
             } catch (NumberFormatException e) {
                 System.out.println("Please enter a valid number.");
             } catch (InvalidInputException e) {
@@ -46,15 +43,12 @@ public class StudentUI {
         }
     }
 
-    public static void addStudent(){
-        String firstName;
-        String lastName;
-
+    public static void addStudent() {
         // Validate first name
+        String firstName;
         while (true) {
             System.out.println("Enter the student first name:");
             firstName = scn.nextLine().trim();
-
             if (InputValidator.isValidName(firstName)) {
                 break;
             } else {
@@ -63,10 +57,10 @@ public class StudentUI {
         }
 
         // Validate last name
+        String lastName;
         while (true) {
             System.out.println("Enter the student last name:");
             lastName = scn.nextLine().trim();
-
             if (InputValidator.isValidName(lastName)) {
                 break;
             } else {
@@ -74,11 +68,11 @@ public class StudentUI {
             }
         }
 
-        //validate email
+        // Validate email
         String email;
         while (true) {
             System.out.println("Enter email (optional, press - to skip):");
-            email = scn.next();
+            email = scn.nextLine().trim();
             if (email.equals("-")) {
                 email = null;
                 break;
@@ -90,56 +84,65 @@ public class StudentUI {
             }
         }
 
-        //Validate batch
-        System.out.println("Enter the student batch");
-        String batch = scn.next();
+        // Validate batch
+        System.out.println("Enter the student batch:");
+        String batch = scn.nextLine().trim();
 
         StudentService studentService = new StudentService();
-        boolean status = studentService.addStudent(firstName,lastName,email,batch);
-        if(status){
+        boolean status = studentService.addStudent(firstName, lastName, email, batch);
+        if (status) {
             System.out.println("Student Added Successfully.");
-        }else{
-            System.out.println("Error while adding student");
+        } else {
+            System.out.println("Error while adding student.");
         }
     }
 
-    public static void viewStudent(){
-        StudentService.viewAll();
-    }
-
-    public static void searchStudent(){
-        System.out.println("Enter the student id: ");
-        int id  = scn.nextInt();
-        try{
-            Student s = StudentService.findStudentById(id);
-            s.displayInfo();
+    public static void viewStudent() {
+        try {
+            StudentService.viewAll(); //
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public static void setActive(){
-        System.out.println("Enter the student id: ");
-        int id  = scn.nextInt();
-        try{
+    public static void searchStudent() {
+        try {
+            System.out.println("Enter the student id:");
+            int id = Integer.parseInt(scn.nextLine());
             Student s = StudentService.findStudentById(id);
-            System.out.println("Currently student status is "+getActualStatus(s.getActiveStatus()));
-            while(true){
-                System.out.println("You want to change this status (Y/N)");
-                String ans = scn.nextLine();
-                if(ans.equalsIgnoreCase("Y")) break;
-                else if(ans.equalsIgnoreCase("N")) return;
-                else System.out.println("Wrong input inserted..try again");
-            }
-            StudentService.setActive(s);
-            System.out.println("Status changed successfully.");
-        }catch (Exception e){
+            s.displayInfo();
+        } catch (NumberFormatException e) {
+            System.out.println("Please enter a valid number for Student Id.");
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public static String getActualStatus(boolean status){
-        if(status) return "Active";
-        else return "InActive";
+    public static void setActive() {
+        try {
+            System.out.println("Enter the student id:");
+            int id = Integer.parseInt(scn.nextLine());
+            Student s = StudentService.findStudentById(id);
+
+            while (true) {
+                System.out.println("Currently student status is " + getActualStatus(s.getActiveStatus()));
+                System.out.println("You want to change this status (Y/N)");
+                String ans = scn.nextLine();
+                if (ans.equalsIgnoreCase("Y")) break;
+                else if (ans.equalsIgnoreCase("N")) return;
+                else System.out.println("Wrong input inserted. Try again.");
+            }
+
+            StudentService.setActive(s);
+            System.out.println("Status changed successfully.");
+        } catch (NumberFormatException e) {
+            System.out.println("Please enter a valid number for Student Id.");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static String getActualStatus(boolean status) {
+        return status ? "Active" : "Inactive";
     }
 }

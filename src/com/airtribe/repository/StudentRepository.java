@@ -25,7 +25,6 @@ public class StudentRepository {
             System.out.println("Error while saving the data");
             return false;
         }
-
     }
 
     public Student findStudentById(int id){
@@ -50,6 +49,13 @@ public class StudentRepository {
             throw new EmptyListException("No students available to display");
         }
         students.forEach(Student::displayNameAndID);
+    }
+
+    public void displayNameIdCourse(){
+        if (students.isEmpty()) {
+            throw new EmptyListException("No students available to display");
+        }
+        students.forEach(Student::displayNameIdCourse);
     }
 
     public void setActive(Student s,boolean status){

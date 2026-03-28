@@ -31,6 +31,13 @@ public class CourseRepository {
         courseList.forEach(Course::displayInfo);
     }
 
+    public static void displayCourseIdNameStatus() {
+        if (courseList.isEmpty()) {
+            throw new EmptyListException("No Course Available To Display");
+        }
+        courseList.forEach(Course::displayCourseIdNameStatus);
+    }
+
     public Course findCourseById(int id) {
         if (courseList.isEmpty()) {
             throw new EmptyListException("No course available to display");

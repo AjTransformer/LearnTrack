@@ -43,4 +43,8 @@ public class CourseService {
     public static void viewAll(){
         CourseRepository.viewAllCourse();
     }
+
+    public void displayCourses() {
+        CourseRepository.displayCourseIdNameStatus();
+    }
 }

@@ -58,4 +58,12 @@ public class Course {
         System.out.println("Status           : " + (active ? "Active" : "Inactive"));
         System.out.println("--------------------------");
     }
+
+    public void displayCourseIdNameStatus() {
+        System.out.println("----- Course Details -----");
+        System.out.println("Course ID        : " + id);
+        System.out.println("Course Name      : " + courseName);
+        System.out.println("Status           : " + (active ? "Active" : "Inactive"));
+        System.out.println("--------------------------");
+    }
 }

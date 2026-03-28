@@ -1,8 +1,12 @@
 package util;
 
+import entity.Course;
 import entity.Student;
+import enums.EnrollmentStatus;
 import service.EnrollmentService;
 import service.StudentService;
+
+import java.util.Map;
 
 public class InputValidator {
 
@@ -27,9 +31,17 @@ public class InputValidator {
         return option >=1 && option <=3;
     }
 
-    public static boolean isValidStudentId(int option) {
+    public static Student isValidStudentId(int option) {
         EnrollmentService enroll = new EnrollmentService();
-        Student student = enroll.findStudentByIdInActiveList(option);
-        return student!=null;
+        return enroll.findStudentById(option);
+    }
+
+    public static boolean isValidCourseId(int option, Student student) {
+        EnrollmentService enroll = new EnrollmentService();
+        return enroll.findCourseByIdInCourseList(option) && !enroll.courseAlreadyAssigned(option , student);
+    }
+
+    public static boolean isValidOptionForEnrollment(int option) {
+        return option >=1 && option <=4;
     }
 }
