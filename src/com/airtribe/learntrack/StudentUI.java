@@ -109,6 +109,7 @@ public class StudentUI {
         try {
             System.out.println("Enter the student id:");
             int id = Integer.parseInt(scn.nextLine());
+            if(id==0)return;
             Student s = StudentService.findStudentById(id);
             s.displayInfo();
         } catch (NumberFormatException e) {
@@ -128,11 +129,11 @@ public class StudentUI {
                 System.out.println("Currently student status is " + getActualStatus(s.getActiveStatus()));
                 System.out.println("You want to change this status (Y/N)");
                 String ans = scn.nextLine();
-                if (ans.equalsIgnoreCase("Y")) break;
+                if(ans.equals("0"))return;
+                else if (ans.equalsIgnoreCase("Y")) break;
                 else if (ans.equalsIgnoreCase("N")) return;
                 else System.out.println("Wrong input inserted. Try again.");
             }
-
             StudentService.setActive(s);
             System.out.println("Status changed successfully.");
         } catch (NumberFormatException e) {

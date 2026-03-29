@@ -7,37 +7,39 @@ import util.IdGenerator;
 
 import java.util.List;
 
-
 public class StudentService {
-    static StudentRepository studentRepository;
+    private static final StudentRepository studentRepo = StudentRepository.getInstance();
 
     public StudentService(){
-        studentRepository = studentRepository.getInstance();
+        // repository is shared via singleton, nothing else to do here
     }
 
     public boolean addStudent(String firstName , String lastName, String email, String batch){
         int id = IdGenerator.getNextStudentId();
+
+        // Normalize email: treat null or blank the same
+        boolean hasEmail = email != null && !email.isBlank();
+
         Student s;
-        if(email.isBlank()){
-            s= new Student(id,firstName,lastName,batch,true);
-        }else{
-            s= new Student(id,firstName,lastName,email,batch,true);
+        if (!hasEmail) {
+            s = new Student(id, firstName, lastName, batch, true);
+        } else {
+            s = new Student(id, firstName, lastName, email, batch, true);
         }
-        /*When we create a student , we will add that to the enrollment list and studentList */
-        EnrollmentService enrollmentService = new EnrollmentService();
-        return studentRepository.addStudentToList(s) && enrollmentService.addStudentToEnrollmentList(s);
+
+        return studentRepo.addStudentToList(s);
     }
 
     public static Student findStudentById(int id){
-        return studentRepository.findStudentById(id);
+        return studentRepo.findStudentById(id);
     }
 
     public static void viewAll(){
-        studentRepository.viewAll();
+        studentRepo.viewAll();
     }
 
     public void displayNameIdCourse(){
-        studentRepository.displayNameIdCourse();
+        studentRepo.displayNameIdCourse();
     }
 
     public void displayNameIdCourse(Student student){
@@ -53,10 +55,6 @@ public class StudentService {
     }
 
     public void displayStudentsNameId() {
-        studentRepository.viewStudentByNameAndId();
-    }
-
-    public void displayCourseList(Student student) {
-
+        studentRepo.viewStudentByNameAndId();
     }
 }

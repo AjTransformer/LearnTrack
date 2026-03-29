@@ -66,20 +66,70 @@ src/
 ## Key Features
 
 ### Student Management
-- Add a new student (with or without email — constructor overloading)
-- View all registered students
-- Search student by ID
-- Deactivate a student (soft delete — sets `active = false`)
+
+- **Add a new student**
+  - Captures first name, last name, optional email, and batch.
+  - Name fields are validated to contain **letters only** (no numbers or special characters).
+  - Email is optional:
+    - User can enter `-` to skip, in which case email is stored as `null`.
+    - If provided, the email must contain `@` and `.` (basic format check).
+  - A unique `id` is assigned via `IdGenerator`.
+  - New students are created as **active** by default and stored in the singleton `StudentRepository`.
+
+- **View all students**
+  - Lists all students with:
+    - ID, first name, last name, email, batch, and current active status.
+  - If no students exist, a friendly message (from `EmptyListException`) is shown instead of crashing.
+
+- **Search student by ID**
+  - Prompts for a student ID and looks it up via `StudentService.findStudentById`.
+  - On success, prints a detailed student snapshot.
+  - On failure:
+    - If there are no students, shows “No students available to display”.
+    - If the ID does not exist, shows “Student with ID X not found”.
+
+- **Activate/Deactivate a student**
+  - Prompts for a student ID.
+  - Shows the current status (`Active` / `Inactive`).
+  - Asks for confirmation (`Y/N`) before toggling:
+    - `Y` → flips `active` to the opposite value.
+    - `N` or `0` → cancels the change.
+  - The new status is stored in the shared `StudentRepository` and used by other flows (e.g., inactive students cannot be enrolled).
 
 ### Course Management
-- Add a new course
-- View all available courses
-- Activate or deactivate a course (`CourseStatus` enum)
+
+- **Add a new course**
+  - Captures course name, description, and duration in weeks.
+  - Course name is validated to contain **letters only**.
+  - Duration must be a positive integer (`> 0`).
+  - A unique course `id` is generated via `IdGenerator`.
+  - New courses start as **ACTIVE** (`CourseStatus.ACTIVATE`) and are stored in the singleton `CourseRepository`.
+
+- **View all courses**
+  - Displays each course with:
+    - ID, name, description, duration (weeks), and active/inactive status.
+  - If no courses exist, a friendly “No Course Available To Display” message is shown.
+
+- **Activate/Deactivate a course**
+  - Prompts for a course ID and fetches it via `CourseService.findCourseById`.
+  - Shows the current status using `CourseStatus` (`ACTIVATE` / `DEACTIVATE`).
+  - Asks for confirmation (`Y/N`) before toggling:
+    - On `Y`, the `active` flag is flipped (`CourseService.setActive`).
+    - On `N`, no change is made.
+  - Updated status is stored in `CourseRepository` and respected by other flows (e.g., you can later extend to prevent enrollment into inactive courses).
+
 
 ### Enrollment Management
 - Enroll a student into a course
+  - Creates an `Enrollment` record `(studentId, courseId, enrollmentDate, status)`
+  - Automatically links the `Course` to the `Student`'s in-memory course list for display
+  - Prevents duplicate enrollments for the same student–course pair
+  - Does not allow inactive students to be enrolled
 - View all enrollments for a specific student
-- Mark an enrollment as `COMPLETED` or `CANCELLED` (`EnrollmentStatus` enum)
+  - Backed by `EnrollmentRepository` (`List<Enrollment>`)
+  - Shows course name and current `EnrollmentStatus` (e.g. `ACTIVE`, `COMPLETED`, `CANCELLED`)
+- Mark an enrollment as `COMPLETED`, `CANCELLED`, or set back to `ACTIVE`
+  - Status change is per student–course pair
 
 ---
 

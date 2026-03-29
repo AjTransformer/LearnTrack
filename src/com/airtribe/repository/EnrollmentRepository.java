@@ -1,119 +1,96 @@
 package repository;
 
+import entity.Enrollment;
 import entity.Student;
 import enums.EnrollmentStatus;
 import exception.EmptyListException;
 import exception.EntityNotFoundException;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class EnrollmentRepository {
-    static Map<Student , EnrollmentStatus> activeEnrollStudent = new HashMap<>();
 
+    // In-memory storage of all enrollments (one per student-course pair)
+    private static final List<Enrollment> enrollments = new ArrayList<>();
 
-    public static boolean add(Student s){
-         try{
-             activeEnrollStudent.put(s,EnrollmentStatus.ACTIVE);
-             return true;
-        }catch (Exception e){
-            System.out.println("Error While Saving The Data In Enrollment List !!");
+    /**
+     * Add a new enrollment. If the same student-course pair already exists, do not duplicate it.
+     */
+    public static boolean add(Enrollment enrollment) {
+        if (enrollment == null) {
+            throw new IllegalArgumentException("Enrollment cannot be null");
+        }
+
+        boolean exists = enrollments.stream().anyMatch(e ->
+                e.getStudentId() == enrollment.getStudentId() &&
+                        e.getCourseId() == enrollment.getCourseId());
+
+        if (exists) {
+            System.out.println("Enrollment already exists for student ID " + enrollment.getStudentId() +
+                    " and course ID " + enrollment.getCourseId());
             return false;
         }
+
+        return enrollments.add(enrollment);
     }
 
-    public static void setEnrollmentStatus(Student s, int courseId, int enrollStatus) {
+    /**
+     * Update the enrollment status for a given student and course.
+     */
+    public static void setEnrollmentStatus(Student s, int courseId, EnrollmentStatus newStatus) {
         if (s == null) {
             throw new IllegalArgumentException("Student cannot be null");
         }
-
-        boolean courseFound = s.getCourseListOfStudent().stream()
-                .anyMatch(course -> course.getId() == courseId);
-
-        if (!courseFound) {
-            throw new EntityNotFoundException(
-                    "Course with ID " + courseId + " is not assigned to student ID " + s.getId()
-            );
+        if (newStatus == null) {
+            throw new IllegalArgumentException("Enrollment status cannot be null");
         }
 
-        EnrollmentStatus newStatus;
-        switch (enrollStatus) {
-            case 1:
-                newStatus = EnrollmentStatus.COMPLETED;
-                break;
-            case 2:
-                newStatus = EnrollmentStatus.CANCELLED;
-                break;
-            case 3:
-                newStatus = EnrollmentStatus.ACTIVE;
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid enrollment status");
-        }
+        Enrollment enrollment = enrollments.stream()
+                .filter(e -> e.getStudentId() == s.getId() && e.getCourseId() == courseId)
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Enrollment not found for student ID " + s.getId() + " and course ID " + courseId
+                ));
 
-        if (!activeEnrollStudent.containsKey(s)) {
-            throw new EntityNotFoundException(
-                    "Student with ID " + s.getId() + " not found in enrollment list"
-            );
-        }
-
-        activeEnrollStudent.put(s, newStatus);
-        System.out.println("Enrollment Changed Successfully !!");
+        enrollment.setEnrollmentStatus(newStatus);
     }
 
-    //fetch student and courseId
+    /**
+     * Get the current enrollment status for a given student-course pair.
+     */
     public static EnrollmentStatus getEnrollStatus(Student student, int courseId) {
-        if (activeEnrollStudent.isEmpty()) {
+        if (enrollments.isEmpty()) {
             throw new EmptyListException("No active enrollments found");
         }
 
-        boolean courseFound = student.getCourseListOfStudent().stream()
-                .anyMatch(course -> course.getId() == courseId);
-
-        if (!courseFound) {
-            throw new EntityNotFoundException(
-                    "Course with ID " + courseId + " is not assigned to student ID " + student.getId()
-            );
-        }
-
-        EnrollmentStatus status = activeEnrollStudent.get(student);
-
-        if (status == null) {
-            throw new EntityNotFoundException(
-                    "Student with ID " + student.getId() + " not found in active enrollment list"
-            );
-        }
-
-        return status;
-    }
-
-    public Map.Entry<Student, EnrollmentStatus> findStudentByIdInActiveList(int id){
-        if (activeEnrollStudent.isEmpty()) {
-            throw new EmptyListException("No Students Available To Display In Active List");
-        }
-
-        return activeEnrollStudent.entrySet().stream()
-                .filter(entry -> entry.getKey().getId() == id)
+        Enrollment enrollment = enrollments.stream()
+                .filter(e -> e.getStudentId() == student.getId() && e.getCourseId() == courseId)
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("Student with ID " + id + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Enrollment not found for student ID " + student.getId() + " and course ID " + courseId
+                ));
+
+        return enrollment.getEnrollmentStatus();
     }
 
-    public void displayActiveStudent() {
-        if (activeEnrollStudent.isEmpty()) {
-            throw new EmptyListException("No Students Available To Display In Active List");
+    /**
+     * Return all enrollments for a given student.
+     */
+    public static List<Enrollment> findByStudent(Student student) {
+        if (enrollments.isEmpty()) {
+            throw new EmptyListException("No enrollments available");
         }
 
-        for (Map.Entry<Student, EnrollmentStatus> entry : activeEnrollStudent.entrySet()) {
-            Student student = entry.getKey();
-            EnrollmentStatus status = entry.getValue();
+        List<Enrollment> result = enrollments.stream()
+                .filter(e -> e.getStudentId() == student.getId())
+                .collect(Collectors.toList());
 
-            System.out.println(
-                    "ID: " + student.getId() +
-                            ", First Name: " + student.getFirstName() +
-                            ", Last Name: " + student.getLastName() +
-                            ", Enrollment Status: " + status
-            );
+        if (result.isEmpty()) {
+            throw new EntityNotFoundException("No enrollments found for student ID " + student.getId());
         }
+
+        return result;
     }
 }

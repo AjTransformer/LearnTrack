@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Student extends Person{
     private List<Course> courseListOfStudent ;
+
     public Student(int id , String firstName, String lastName, String email, String batch , boolean active){
         super(id,firstName,lastName,email,batch,active);
         courseListOfStudent = new ArrayList<>();

@@ -8,11 +8,14 @@ import java.util.*;
 
 public class StudentRepository {
     private List<Student> students = new ArrayList<>();
-    private static StudentRepository instance = null;
-    private StudentRepository(){}
 
-    public static StudentRepository getInstance(){
-        if(instance==null){
+    // singleton support
+    private static StudentRepository instance;
+
+    private StudentRepository() {}
+
+    public static StudentRepository getInstance() {
+        if (instance == null) {
             instance = new StudentRepository();
         }
         return instance;
@@ -62,6 +65,6 @@ public class StudentRepository {
         if (students.isEmpty()) {
             throw new EmptyListException("No students available to change status, please add student before changing status.");
         }
-            s.setActiveStatus(status);
+        s.setActiveStatus(status);
     }
 }

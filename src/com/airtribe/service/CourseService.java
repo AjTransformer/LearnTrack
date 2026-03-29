@@ -6,23 +6,19 @@ import repository.CourseRepository;
 import util.IdGenerator;
 
 public class CourseService {
-    static CourseRepository courseRepository;
-
-    public CourseService(){
-        courseRepository = courseRepository.getInstance();
-    }
+    private static final CourseRepository courseRepo = CourseRepository.getInstance();
 
     public boolean addCourse(String courseName, String description, int batchDurationInWeeks){
         int id = IdGenerator.getNextCourseId();
         boolean status = getStatusOfCourse(CourseStatus.ACTIVATE);
-       Course course = new Course();
+        Course course = new Course();
         course.setId(id);
         course.setCourseName(courseName);
         course.setDescription(description);
         course.setDurationInWeeks(batchDurationInWeeks);
         course.setActive(status);
 
-        return CourseRepository.addCourseToList(course);
+        return courseRepo.addCourseToList(course);
     }
 
     public static void setActive(Course course){
@@ -30,21 +26,18 @@ public class CourseService {
     }
 
     private static boolean getStatusOfCourse(CourseStatus courseStatus) {
-        if(courseStatus == CourseStatus.ACTIVATE){
-            return true;
-        }
-        return false;
+        return courseStatus == CourseStatus.ACTIVATE;
     }
 
-    public static Course findCourseById(int id){
-        return courseRepository.findCourseById(id);
+    public Course findCourseById(int id){
+        return courseRepo.findCourseById(id);
     }
 
     public static void viewAll(){
-        CourseRepository.viewAllCourse();
+        courseRepo.viewAllCourse();
     }
 
     public void displayCourses() {
-        CourseRepository.displayCourseIdNameStatus();
+        courseRepo.displayCourseIdNameStatus();
     }
 }

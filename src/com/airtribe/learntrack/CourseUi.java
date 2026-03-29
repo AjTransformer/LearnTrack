@@ -93,7 +93,8 @@ public class CourseUi {
         try {
             System.out.println("Enter The Course Id:");
             int id = Integer.parseInt(scn.nextLine());
-            Course course = CourseService.findCourseById(id);
+            CourseService courseService = new CourseService();
+            Course course = courseService.findCourseById(id);
 
             if (course.isActive()) {
                 System.out.println("Currently course status is " + CourseStatus.ACTIVATE.toString());

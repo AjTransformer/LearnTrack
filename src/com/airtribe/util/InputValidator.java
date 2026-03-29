@@ -38,10 +38,10 @@ public class InputValidator {
 
     public static boolean isValidCourseId(int option, Student student) {
         EnrollmentService enroll = new EnrollmentService();
-        return enroll.findCourseByIdInCourseList(option) && !enroll.courseAlreadyAssigned(option , student);
+        return enroll.isExistingCourseId(option) && !enroll.courseAlreadyAssigned(option , student);
     }
 
     public static boolean isValidOptionForEnrollment(int option) {
-        return option >=1 && option <=4;
+        return option >=1 && option <=3;
     }
 }
